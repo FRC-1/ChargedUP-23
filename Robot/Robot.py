@@ -1,5 +1,5 @@
 from Controllers.StepperMotorController import StepperMotorController
-from Controllers.BrushlessMotorController import BrushlessMotorController, ControlType
+from Controllers.BrushlessMotorController import BrushlessMotorController, ControlMode
 from Constants import Constants
 import asyncio
 import matplotlib.pyplot as plt
@@ -31,7 +31,6 @@ async def plotPosition(loop):
         time += Constants.Simulation.dt
         await asyncio.sleep(Constants.Simulation.dt)
 
-
 loop = asyncio.new_event_loop()
 
 # Continuous Tasks
@@ -40,7 +39,7 @@ loop.create_task(testBrushless.simulationUpdate())
 loop.create_task(plotPosition(loop))
 
 # Immediate Tasks
-loop.create_task(testBrushless.setControlType(ControlType.POSITION_CONTROL))
+loop.create_task(testBrushless.setControlMode(ControlMode.POSITION_CONTROL))
 loop.create_task(testBrushless.setPositionSetpoint(360))
 loop.create_task(testBrushless.setVelocitySetpoint(5000))
 

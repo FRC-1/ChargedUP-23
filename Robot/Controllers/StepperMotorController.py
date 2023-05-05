@@ -20,6 +20,8 @@ class StepperMotorController:
         GPIO.setup(self.stepPort, GPIO.OUT)
         GPIO.setup(self.directionPort, GPIO.OUT)
         GPIO.setup(self.enablePort, GPIO.OUT)
+
+        self.disable()
         
         
     def enable(self):
