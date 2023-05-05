@@ -1,9 +1,8 @@
 import RPiSim.GPIO
 
 class Constants:
-    simulated = True
-    GPIO = 'RPiSim.GPIO' if simulated else 'RPI.GPIO'
-
-
-
-    
+    class Simulation:
+        Simulated = True
+        GPIO = 'RPiSim.GPIO' if Simulated else 'RPI.GPIO'
+    class Robot:
+        pass

@@ -4,7 +4,7 @@ meth = math
 from Constants import Constants
 
 import importlib
-GPIO = importlib.import_module(Constants.GPIO).GPIO
+GPIO = importlib.import_module(Constants.Simulation.GPIO).GPIO
 
 class StepperMotorController:
     def __init__(self,enablePort:int,stepPort:int,directionPort:int,stepsPerRevolution:int,simulated:bool):
