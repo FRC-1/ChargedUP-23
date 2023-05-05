@@ -2,3 +2,4 @@ odrive
 meshcat
 numpy
 opencv-python
+GPIOSimulator
