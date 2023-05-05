@@ -1,11 +1,14 @@
 from Controllers.StepperMotorController import StepperMotorController
-from Controllers.BrushlessMotorController import BrushlessMotorController, ControlMode
+from Controllers.BrushlessMotorController import BrushlessMotorController, ControlMode, InputMode
 from Constants import Constants
 import asyncio
 import matplotlib.pyplot as plt
 
-testStepper = StepperMotorController(2,3,4,400,True)
-testBrushless = BrushlessMotorController(0,0,140,7)
+testStepper = StepperMotorController(2,3,4,400,Constants.Simulation.Simulated)
+testBrushless = BrushlessMotorController(000000000,0,140,Constants.Robot.Odrive,Constants.Simulation)
+
+testBrushless.enable()
+testBrushless.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
 
 async def plotPosition(loop):
     y = []
@@ -34,13 +37,9 @@ async def plotPosition(loop):
 loop = asyncio.new_event_loop()
 
 # Continuous Tasks
-loop.create_task(testBrushless.enable())
 loop.create_task(testBrushless.simulationUpdate())
 loop.create_task(plotPosition(loop))
 
-# Immediate Tasks
-loop.create_task(testBrushless.setControlMode(ControlMode.POSITION_CONTROL))
-loop.create_task(testBrushless.setPositionSetpoint(360))
-loop.create_task(testBrushless.setVelocitySetpoint(5000))
+testBrushless.setPositionSetpoint(360)
 
 loop.run_forever()
