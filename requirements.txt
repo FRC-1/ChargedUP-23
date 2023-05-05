@@ -3,3 +3,4 @@ meshcat
 numpy
 opencv-python
 GPIOSimulator
+matplotlib

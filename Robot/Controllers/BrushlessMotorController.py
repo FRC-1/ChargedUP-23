@@ -25,41 +25,42 @@ class BrushlessMotorController():
 
         self.simulated_position = 0
 
-    async def moveToPoint(self):
-        max_rpm = setpoint,Constants.Simulation.Voltage * self.KV
+    async def simulationUpdate(self):
+        max_rpm = Constants.Simulation.Voltage * self.kV
         max_rps = max_rpm/60
 
-        while self.simulated_position != self.position_setpoint:
-            self.simulated_position += (self.position_setpoint - self.simulated_position) * (max_rps * 0.02)
+        while True:
+            if(self.enabled):    
+                if(self.control_type == ControlType.POSITION_CONTROL):
+                    self.simulated_position += (self.position_setpoint - self.simulated_position) * (max_rps * Constants.Simulation.dt) * Constants.Simulation.kP
+                elif(self.control_type == ControlType.VELOCITY_CONTROL):
+                    self.simulated_position += min(self.velocity_setpoint,Constants.Simulation.Voltage * self.kV) / 60.0 * Constants.Simulation.dt
+                
             await asyncio.sleep(Constants.Simulation.dt)
+
 
     async def setControlType(self,control_type:ControlType):
         self.control_type = control_type
         if not Constants.Simulation.Simulated:
             pass # CHANGE ODRIVE CONTROL TYPE
-        else:
-            if(self.control_type == ControlType.POSITION_CONTROL):
-                await self.moveToPoint()
 
     async def setVelocitySetpoint(self,setpoint:float):
-        self.velocity_setpoint = math.min(setpoint,Constants.Simulation.Voltage * self.KV)
+        self.velocity_setpoint = min(setpoint,Constants.Simulation.Voltage * self.kV)
         if not Constants.Simulation.Simulated:
             pass # CHANGE ODRIVE VELOCITY SETPOINT
         
 
     async def setPositionSetpoint(self,setpoint:float):
-        self.velocity_setpoint = setpoint
+        self.position_setpoint = setpoint
         if not Constants.Simulation.Simulated:
             pass # CHANGE ODRIVE POSITION SETPOINT
-        if(self.control_type == ControlType.POSITION_CONTROL):
-                await self.moveToPoint()
 
-    def enable(self):
+    async def enable(self):
         self.enabled = True
         if not Constants.Simulation.Simulated:
             pass # SET ODRIVE AXIS STATE TO CLOSED_LOOP_CONTROL
 
-    def disable(self):
+    async def disable(self):
         self.enabled = False
         if not Constants.Simulation.Simulated:
             pass # SET ODRIVE AXIS STATE TO IDLE

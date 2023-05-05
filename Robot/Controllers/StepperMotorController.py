@@ -31,17 +31,18 @@ class StepperMotorController:
         GPIO.output(self.enablePort, GPIO.LOW)
 
     async def moveSteps(self,steps:int,rpm:float):
-        GPIO.output(self.directionPort,GPIO.LOW if steps < 0 else GPIO.HIGH)
-        sps = self.stepsPerRevolution * rpm/60
-        sleep = 1/sps
-        for i in range(steps):
-            GPIO.output(self.stepPort, GPIO.HIGH)
-            await asyncio.sleep(sleep/2)
-            GPIO.output(self.stepPort, GPIO.LOW)
-            await asyncio.sleep(sleep/2)
-            self.currentSteps += (-1 if steps < 0 else 1) if self.enabled else 0
+        if(self.enabled):
+            GPIO.output(self.directionPort,GPIO.LOW if steps < 0 else GPIO.HIGH)
+            sps = self.stepsPerRevolution * rpm/60
+            sleep = 1/sps
+            for i in range(steps):
+                GPIO.output(self.stepPort, GPIO.HIGH)
+                await asyncio.sleep(sleep/2)
+                GPIO.output(self.stepPort, GPIO.LOW)
+                await asyncio.sleep(sleep/2)
+                self.currentSteps += (-1 if steps < 0 else 1) if self.enabled else 0
 
-            self.currentSteps %= self.stepsPerRevolution
+                self.currentSteps %= self.stepsPerRevolution
             
     async def moveToStep(self,target_step:int,rpm:float):
         await self.moveSteps(target_step - self.currentSteps,rpm)
