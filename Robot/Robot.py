@@ -13,32 +13,35 @@ testBrushless.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
 
 sch = Scheduler()
 
-y = []
-x = []
-
 data = {
-'time' : 0.0,
-'extra' : 0.0,
-'done' : False
+    'y' : [],
+    'x' : [],
+    'time' : 0.0,
+    'extra' : 0.0,
+    'done' : False
 }
 
+runTask = None
+
 async def plotPosition():
-    y.append(testBrushless.simulated_position)
-    x.append(data['time'])
+    if not data['done']:
+        data['y'].append(testBrushless.simulated_position)
+        data['x'].append(data['time'])
 
-    if((testBrushless.position_setpoint - testBrushless.simulated_position) < 0.1):
-        data['extra'] = data['extra'] + Constants.Simulation.dt
-        if(data['extra'] >= 1):
-            plt.title("Line graph")
-            plt.plot(x, y, color="red")
-            plt.show()
-    data['time'] = data['time'] + Constants.Simulation.dt
+        if((testBrushless.position_setpoint - testBrushless.simulated_position) < 0.1):
+            data['extra'] = data['extra'] + Constants.Simulation.dt
+            if(data['extra'] >= 1):
+                plt.title("Line graph")
+                plt.plot(data['x'], data['y'], color="red")
+                plt.show()
+                data['done'] = True
+        data['time'] = data['time'] + Constants.Simulation.dt
 
-    print("BB")
-
+        print(data['time'])
 
 # Continuous Tasks
-sch.addContinuousTask(testBrushless.simulationUpdate())
-sch.addContinuousTask(plotPosition())
+sch.addContinuousTask(testBrushless.simulationUpdate)
+sch.addContinuousTask(plotPosition)
+sch.startContinuous()
 
 testBrushless.setPositionSetpoint(100)

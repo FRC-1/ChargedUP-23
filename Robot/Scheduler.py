@@ -17,11 +17,11 @@ class Scheduler():
 
     async def Continuous(self):
         while True:
-            print("AA")
             for task in self.continuous_tasks:
-                asyncio.run_coroutine_threadsafe(task,loop=self.loop)
+                asyncio.run_coroutine_threadsafe(task(),loop=self.loop)
 
             await asyncio.sleep(Constants.Simulation.dt)
+        
 
 
     def __init__(self):
@@ -30,17 +30,17 @@ class Scheduler():
         loop_handler.start()
         self.loop = loop_handler.loop
 
-        self.tasks = {}
         self.continuous_tasks = []
-        asyncio.run_coroutine_threadsafe(self.Continuous(),loop=self.loop)
 
     def addTask(self,task:Awaitable):
         run_task = asyncio.run_coroutine_threadsafe(task,loop=self.loop)
-        self.tasks[task] = run_task
-    
-    def cancelTask(self, task:Awaitable):
-        run_task = self.tasks[task]
-        run_task.cancel()
+        return run_task
+
+    def startContinuous(self):
+        self.addTask(self.runContinuous())
 
     def addContinuousTask(self,task:Awaitable):
         self.continuous_tasks.append(task)
+
+    async def runContinuous(self):
+        asyncio.run_coroutine_threadsafe(self.Continuous(),loop=self.loop)
