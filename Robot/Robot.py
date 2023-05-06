@@ -3,6 +3,7 @@ from Controllers.BrushlessMotorController import BrushlessMotorController, Contr
 from Constants import Constants
 import asyncio
 import matplotlib.pyplot as plt
+from Scheduler import Scheduler
 
 testStepper = StepperMotorController(2,3,4,400,Constants.Simulation.Simulated)
 testBrushless = BrushlessMotorController(000000000,0,140,Constants.Robot.Odrive,Constants.Simulation)
@@ -10,36 +11,34 @@ testBrushless = BrushlessMotorController(000000000,0,140,Constants.Robot.Odrive,
 testBrushless.enable()
 testBrushless.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
 
-async def plotPosition(loop):
-    y = []
-    x = []
+sch = Scheduler()
 
-    time = 0.0
-    extra = 0.0
+y = []
+x = []
 
-    while True:
-        y.append(testBrushless.simulated_position)
-        x.append(time)
+data = {
+'time' : 0.0,
+'extra' : 0.0,
+'done' : False
+}
 
-        if((testBrushless.position_setpoint - testBrushless.simulated_position) < 0.1):
-            extra += Constants.Simulation.dt
-            if(extra >= 1):
-                plt.title("Line graph")
-                plt.plot(x, y, color="red")
-                plt.show()
+async def plotPosition():
+    y.append(testBrushless.simulated_position)
+    x.append(data['time'])
 
-                loop.stop()
-                break
+    if((testBrushless.position_setpoint - testBrushless.simulated_position) < 0.1):
+        data['extra'] = data['extra'] + Constants.Simulation.dt
+        if(data['extra'] >= 1):
+            plt.title("Line graph")
+            plt.plot(x, y, color="red")
+            plt.show()
+    data['time'] = data['time'] + Constants.Simulation.dt
 
-        time += Constants.Simulation.dt
-        await asyncio.sleep(Constants.Simulation.dt)
+    print("BB")
 
-loop = asyncio.new_event_loop()
 
 # Continuous Tasks
-loop.create_task(testBrushless.simulationUpdate())
-loop.create_task(plotPosition(loop))
+sch.addContinuousTask(testBrushless.simulationUpdate())
+sch.addContinuousTask(plotPosition())
 
-testBrushless.setPositionSetpoint(360)
-
-loop.run_forever()
+testBrushless.setPositionSetpoint(100)

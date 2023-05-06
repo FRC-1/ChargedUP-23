@@ -4,7 +4,7 @@ meth = math
 import odrive
 from enum import Enum
 import Constants
-
+import time
 class ControlMode(Enum):
     TORQUE_CONTROL = 1,
     VELOCITY_CONTROL=2,
@@ -103,15 +103,12 @@ class BrushlessMotorController():
     async def simulationUpdate(self):
         max_rpm = self.simulation_constants.Voltage * self.kV
         max_rps = max_rpm/60
-
-        while True:
-            if(self.enabled):    
-                if(self.control_mode == ControlMode.POSITION_CONTROL):
-                    self.simulated_position += min((self.position_setpoint - self.simulated_position) * (max_rps * self.simulation_constants.dt) * self.simulation_constants.kP + (self.velocity_feedthrough * self.simulation_constants.dt),self.odrive_constants.velocity_lim * self.simulation_constants.dt)
-                elif(self.control_mode == ControlMode.VELOCITY_CONTROL):
-                    self.simulated_position += min(self.velocity_setpoint,self.simulation_constants.Voltage * self.kV) / 60.0 * self.simulation_constants.dt
-                
-            await asyncio.sleep(self.simulation_constants.dt)
+        
+        if(self.enabled):    
+            if(self.control_mode == ControlMode.POSITION_CONTROL):
+                self.simulated_position += min((self.position_setpoint - self.simulated_position) * (max_rps * self.simulation_constants.dt) * self.simulation_constants.kP + (self.velocity_feedthrough * self.simulation_constants.dt),self.odrive_constants.velocity_lim * self.simulation_constants.dt)
+            elif(self.control_mode == ControlMode.VELOCITY_CONTROL):
+                self.simulated_position += min(self.velocity_setpoint,self.simulation_constants.Voltage * self.kV) / 60.0 * self.simulation_constants.dt
 
     def setControlMode(self,control_mode:ControlMode,input_mode:InputMode):
         self.input_mode = input_mode
