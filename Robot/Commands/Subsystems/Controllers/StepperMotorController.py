@@ -35,9 +35,6 @@ class StepperMotorController:
     def disable(self):
         self.enabled = False
         GPIO.output(self.enablePort, GPIO.LOW)
-
-    async def moveSteps(self,steps:int,rpm:float):
-        await self.moveToStep(self.currentSteps + steps,rpm)
             
     async def moveToStep(self,target_step:int,rpm:float):
         if(target_step != self.setpoint):
@@ -46,6 +43,7 @@ class StepperMotorController:
                 GPIO.output(self.directionPort,GPIO.LOW if self.setpoint < self.currentSteps else GPIO.HIGH)
                 sps = self.stepsPerRevolution * rpm/60
                 sleep = 1/sps
+
                 if(self.newmove):
                     break
 

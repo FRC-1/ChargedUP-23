@@ -2,6 +2,7 @@ import asyncio
 from typing import Awaitable
 from .SubsystemBase import SubsystemBase
 from enum import Enum
+import time
 
 class CommandPhase(Enum):
     INIT = 1,
@@ -24,11 +25,9 @@ class CommandBase():
         for subsystem in self.subsystems:
             if not subsystem.ready or subsystem.currentCommandPriority > self.priority or (subsystem.currentCommand != self and subsystem.currentCommandPriority == self.priority):
                 return False
-
-        print(subsystem.currentCommandPriority,self.priority)
-
+            
         for subsystem in self.subsystems:
-            if(subsystem.currentCommand != None):
+            if(subsystem.currentCommand != None and subsystem.currentCommand != self):
                 asyncio.run_coroutine_threadsafe(subsystem.currentCommand.abort__(),subsystem.scheduler.loop)
             subsystem.currentCommand = self
             subsystem.currentCommandPriority = self.priority
@@ -50,13 +49,17 @@ class CommandBase():
         await self.end__(True)
 
     async def init__(self):
+        self.start_time = time.time()
         await self.init()
         self.phase = CommandPhase.RUNNING
 
     async def isFinished__(self):
-        self.phase = CommandPhase.FINISHED if await self.isFinished() else CommandPhase.RUNNING
+        self.time = time.time() - self.start_time
+        ended = await self.isFinished()
+        self.phase = CommandPhase.FINISHED if ended else CommandPhase.RUNNING
 
     async def end__(self,aborted):
+        print(aborted)
         await self.end()
         if(not aborted):
             for subsystem in self.subsystems:
@@ -71,3 +74,5 @@ class CommandBase():
         self.priority = priority
         self.scheduler = self.subsystems[0].scheduler
         self.scheduler.addContinuousTask(self.run__)
+        self.start_time = 0.0
+        self.time = 0.0
