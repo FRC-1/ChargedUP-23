@@ -1,6 +1,8 @@
 import RPiSim.GPIO
 
 class Constants:
+    lowest_command_priority = -999999
+
     class Simulation:
         Simulated = True
         GPIO = 'RPiSim.GPIO' if Simulated else 'RPI.GPIO'

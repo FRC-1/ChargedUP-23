@@ -3,6 +3,7 @@ from typing import Awaitable
 from .SubsystemBase import SubsystemBase
 from enum import Enum
 import time
+from Constants import Constants
 
 class CommandPhase(Enum):
     INIT = 1,
@@ -24,6 +25,7 @@ class CommandBase():
     async def run__(self) -> bool: # returns if ran or not
         for subsystem in self.subsystems:
             if not subsystem.ready or subsystem.currentCommandPriority > self.priority or (subsystem.currentCommand != self and subsystem.currentCommandPriority == self.priority):
+                print(subsystem.currentCommandPriority)
                 return False
 
         if(self.conditionSupplier() and self.phase == CommandPhase.READY):
@@ -62,7 +64,7 @@ class CommandBase():
         if(not aborted):
             for subsystem in self.subsystems:
                 subsystem.currentCommand = None
-                subsystem.currentCommandPriority = -1
+                subsystem.currentCommandPriority = Constants.lowest_command_priority
         self.phase = CommandPhase.READY
 
     def __init__(self,subsystems:list[SubsystemBase],conditionSupplier:Awaitable,priority:int):

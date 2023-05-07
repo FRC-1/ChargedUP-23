@@ -1,4 +1,6 @@
 import asyncio
+from Constants import Constants
+
 class SubsystemBase():
     async def periodic(self):
         pass
@@ -18,13 +20,9 @@ class SubsystemBase():
 
     async def periodicMaster__(self):
         await self.periodic()
-        if(self.currentCommandPriority <= -1 and self.defaultCommand != None):
-            self.currentCommand = self.defaultCommand
-            await self.defaultCommand()
     
-    def __init__(self,scheduler,defaultCommand = None):
-        self.defaultCommand = None
-        self.currentCommandPriority = -1
+    def __init__(self,scheduler):
+        self.currentCommandPriority = Constants.lowest_command_priority
         self.currentCommand = None
         self.scheduler = scheduler
         self.ready = False
