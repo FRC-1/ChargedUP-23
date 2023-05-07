@@ -137,6 +137,18 @@ class BrushlessMotorController():
             self.axis.controller.input_vel = self.velocity_feedthrough # SET FEEDFORWARD VELOCITY
             self.axis.controller.input_torque = torque # SET FEEDFORWARD TORQUE
 
+    def getPosition(self):
+        if not self.simulation_constants.Simulated:
+            return self.axis.encoder.pos_estimate
+        else:
+            return self.simulated_position
+        
+    def getVelocity(self):
+        if not self.simulation_constants.Simulated:
+            return self.axis.encoder.vel_estimate * 60 # RPM
+        else:
+            return self.velocity_setpoint
+
     def enable(self):
         self.enabled = True
         if not self.simulation_constants.Simulated:

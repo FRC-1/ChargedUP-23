@@ -58,7 +58,6 @@ class StepperMotorController:
     async def moveToStep(self,target_step:int,rpm:float):
         if(target_step != self.setpoint):
             self.newmove = True
-            print("MOVING",target_step - self.currentSteps)
             await self.moveSteps(target_step - self.currentSteps,rpm)
     
     async def moveToAngle(self, angle:float, rpm:float):
