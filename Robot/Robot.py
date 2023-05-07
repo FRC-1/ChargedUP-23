@@ -1,5 +1,5 @@
-from Commands.Subsystems.SubsystemBrushlessExample import BrushlessSubsystem
-from Commands.Subsystems.SubsystemStepperExample import StepperSubsystem
+from Subsystems.SubsystemBrushlessExample import BrushlessSubsystem
+from Subsystems.SubsystemStepperExample import StepperSubsystem
 from Commands.TestCommand import TestCommand
 
 from Scheduler import Scheduler

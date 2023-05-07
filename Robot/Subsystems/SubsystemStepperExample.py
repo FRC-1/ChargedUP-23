@@ -1,6 +1,6 @@
 from .base.SubsystemBase import SubsystemBase
 
-from .Controllers.StepperMotorController import StepperMotorController
+from Hardware.StepperMotorController import StepperMotorController
 from Constants import Constants
 
 class StepperSubsystem(SubsystemBase):

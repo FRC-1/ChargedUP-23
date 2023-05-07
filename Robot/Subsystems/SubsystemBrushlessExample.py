@@ -1,6 +1,6 @@
 from .base.SubsystemBase import SubsystemBase
 
-from .Controllers.BrushlessMotorController import BrushlessMotorController, ControlMode, InputMode
+from Hardware.BrushlessMotorController import BrushlessMotorController, ControlMode, InputMode
 from Constants import Constants
 
 class BrushlessSubsystem(SubsystemBase):

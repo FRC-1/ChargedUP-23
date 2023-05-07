@@ -1,6 +1,5 @@
 import asyncio
 from typing import Awaitable
-from .SubsystemBase import SubsystemBase
 from enum import Enum
 import time
 from Constants import Constants
@@ -67,7 +66,7 @@ class CommandBase():
                 subsystem.currentCommandPriority = Constants.lowest_command_priority
         self.phase = CommandPhase.READY
 
-    def __init__(self,subsystems:list[SubsystemBase],conditionSupplier:Awaitable,priority:int):
+    def __init__(self,subsystems:list,conditionSupplier:Awaitable,priority:int):
         self.phase = CommandPhase.READY
         self.subsystems = subsystems
         self.conditionSupplier = conditionSupplier

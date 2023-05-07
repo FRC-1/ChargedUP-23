@@ -1,7 +1,7 @@
 import asyncio
 from typing import Awaitable
-from .Subsystems.SubsystemStepperExample import StepperSubsystem
-from .Subsystems.base.CommandBase import CommandBase, CommandPhase
+from Subsystems.SubsystemStepperExample import StepperSubsystem
+from .base.CommandBase import CommandBase, CommandPhase
 
 class TestCommand(CommandBase):
     def __init__(self, stepperSubsystem:StepperSubsystem, conditionSupplier: Awaitable, priority: int,target_angle):
