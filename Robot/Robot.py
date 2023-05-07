@@ -1,17 +1,16 @@
-from Controllers.StepperMotorController import StepperMotorController
-from Controllers.BrushlessMotorController import BrushlessMotorController, ControlMode, InputMode
-from Constants import Constants
-import asyncio
+
+from Commands.Subsystems.SubsystemBrushlessExample import BrushlessSubsystem
+from Commands.Subsystems.SubsystemStepperExample import StepperSubsystem
+
 import matplotlib.pyplot as plt
 from Scheduler import Scheduler
 
-testStepper = StepperMotorController(2,3,4,400,Constants.Simulation.Simulated)
-testBrushless = BrushlessMotorController(000000000,0,140,Constants.Robot.Odrive,Constants.Simulation)
-
-testBrushless.enable()
-testBrushless.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
-
 sch = Scheduler()
+brushlesssubsystem = BrushlessSubsystem(sch)
+# steppersubsystem = StepperSubsystem(sch)
+
+sch.addTask(brushlesssubsystem.enable())
+# sch.addTask(steppersubsystem.enable())
 
 data = {
     'y' : [],
@@ -20,8 +19,6 @@ data = {
     'extra' : 0.0,
     'done' : False
 }
-
-runTask = None
 
 async def plotPosition():
     if not data['done']:
@@ -40,8 +37,8 @@ async def plotPosition():
         print(data['time'])
 
 # Continuous Tasks
-sch.addContinuousTask(testBrushless.simulationUpdate)
-sch.addContinuousTask(plotPosition)
+# sch.addContinuousTask(testBrushless.simulationUpdate)
+# sch.addContinuousTask(plotPosition)
 sch.startContinuous()
 
-testBrushless.setPositionSetpoint(100)
+# testBrushless.setPositionSetpoint(100)
