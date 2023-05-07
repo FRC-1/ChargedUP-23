@@ -20,28 +20,28 @@ class CommandBase():
         pass
  
 
-
     async def run__(self) -> bool: # returns if ran or not
-        if not self.subsystem.ready:
-            return
-        if(self.subsystem.currentCommand != self):
-            if(self.subsystem.currentCommandPriority <= self.priority):
-                if(self.subsystem.currentCommand != None):
-                    asyncio.run_coroutine_threadsafe(self.subsystem.currentCommand.abort__(),self.subsystem.scheduler.loop)
-                    self.subsystem.currentCommand = self
-                    self.subsystem.currentCommandPriority = self.priority
-        else:
-            return
+        for subsystem in self.subsystems:
+            if not subsystem.ready or subsystem.currentCommand == self or subsystem.currentCommandPriority > self.priority:
+                return False
+
+        for subsystem in self.subsystems:
+            if(subsystem.currentCommand != None):
+                asyncio.run_coroutine_threadsafe(subsystem.currentCommand.abort__(),subsystem.scheduler.loop)
+            subsystem.currentCommand = self
+            subsystem.currentCommandPriority = self.priority
 
         if(self.conditionSupplier() and self.phase == CommandPhase.READY):
             self.phase = CommandPhase.INIT
 
         if(self.phase == CommandPhase.INIT):
-            asyncio.run_coroutine_threadsafe(self.init__(),self.subsystem.scheduler.loop)
+            asyncio.run_coroutine_threadsafe(self.init__(),self.scheduler.loop)
         if(self.phase == CommandPhase.RUNNING):
-            asyncio.run_coroutine_threadsafe(self.isFinished__(),self.subsystem.scheduler.loop)
+            asyncio.run_coroutine_threadsafe(self.isFinished__(),self.scheduler.loop)
         if(self.phase == CommandPhase.FINISHED):
-            asyncio.run_coroutine_threadsafe(self.end__(),self.subsystem.scheduler.loop)
+            asyncio.run_coroutine_threadsafe(self.end__(),self.scheduler.loop)
+
+        return True
 
     async def abort__(self):
         self.phase = CommandPhase.FINISHED
@@ -56,13 +56,15 @@ class CommandBase():
 
     async def end__(self):
         await self.end()
-        self.subsystem.currentCommand = None
-        self.subsystem.currentCommandPriority = -1
+        for subsystem in self.subsystems:
+            subsystem.currentCommand = None
+            subsystem.currentCommandPriority = -1
         self.phase = CommandPhase.READY
 
-    def __init__(self,subsystem:SubsystemBase,conditionSupplier:Awaitable,priority:int):
+    def __init__(self,subsystems:list[SubsystemBase],conditionSupplier:Awaitable,priority:int):
         self.phase = CommandPhase.READY
-        self.subsystem = subsystem
+        self.subsystems = subsystems
         self.conditionSupplier = conditionSupplier
         self.priority = priority
-        self.subsystem.scheduler.addContinuousTask(self.run__)
+        self.scheduler = self.subsystems[0].scheduler
+        self.scheduler.addContinuousTask(self.run__)

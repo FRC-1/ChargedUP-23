@@ -10,7 +10,8 @@ sch = Scheduler()
 # sch.addTask(brushlesssubsystem.enable())
 
 steppersubsystem = StepperSubsystem(sch)
-command = TestCommand(steppersubsystem, lambda : 1 == 1,1)
+command = TestCommand(steppersubsystem, lambda : 1 == 1,1,target_angle=90)
+command2 = TestCommand(steppersubsystem, lambda : 1 == 1,1,target_angle=45)
 
 sch.addTask(steppersubsystem.enable())
 
