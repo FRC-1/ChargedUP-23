@@ -9,11 +9,6 @@ class BrushlessSubsystem(SubsystemBase):
         self.testBrushless.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
 
     async def periodic(self):
-        if(self.testBrushless.getPosition() < 1):
-            self.testBrushless.setPositionSetpoint(100)
-        elif(self.testBrushless.getPosition() > 99):
-            self.testBrushless.setPositionSetpoint(0)
-        await self.testBrushless.simulationUpdate()
         print("Subsystem Periodic",self.testBrushless.getPosition(),"/",self.testBrushless.position_setpoint)
 
 

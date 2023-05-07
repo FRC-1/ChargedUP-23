@@ -37,13 +37,15 @@ class StepperMotorController:
         GPIO.output(self.enablePort, GPIO.LOW)
 
     async def moveSteps(self,steps:int,rpm:float):
-        self.newmove = False
-        self.setpoint = self.currentSteps + steps
-        if(self.enabled):
-            GPIO.output(self.directionPort,GPIO.LOW if steps < 0 else GPIO.HIGH)
-            sps = self.stepsPerRevolution * rpm/60
-            sleep = 1/sps
-            for i in range(abs(steps)):
+        await self.moveToStep(self.currentSteps + steps,rpm)
+            
+    async def moveToStep(self,target_step:int,rpm:float):
+        if(target_step != self.setpoint):
+            self.setpoint = target_step
+            while abs(self.currentSteps - self.setpoint) > 0:
+                GPIO.output(self.directionPort,GPIO.LOW if self.setpoint < self.currentSteps else GPIO.HIGH)
+                sps = self.stepsPerRevolution * rpm/60
+                sleep = 1/sps
                 if(self.newmove):
                     break
 
@@ -51,14 +53,8 @@ class StepperMotorController:
                 await asyncio.sleep(sleep/2)
                 GPIO.output(self.stepPort, GPIO.LOW)
                 await asyncio.sleep(sleep/2)
-                self.currentSteps += (-1 if steps < 0 else 1) if self.enabled else 0
-
+                self.currentSteps += (-1 if (self.setpoint < self.currentSteps) else 1) if self.enabled else 0
                 self.currentSteps %= self.stepsPerRevolution
-            
-    async def moveToStep(self,target_step:int,rpm:float):
-        if(target_step != self.setpoint):
-            self.newmove = True
-            await self.moveSteps(target_step - self.currentSteps,rpm)
     
     async def moveToAngle(self, angle:float, rpm:float):
         await self.moveToStep(math.floor((angle / 360.0) * self.stepsPerRevolution),rpm)

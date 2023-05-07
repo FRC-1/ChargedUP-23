@@ -22,8 +22,10 @@ class CommandBase():
 
     async def run__(self) -> bool: # returns if ran or not
         for subsystem in self.subsystems:
-            if not subsystem.ready or subsystem.currentCommand == self or subsystem.currentCommandPriority > self.priority:
+            if not subsystem.ready or subsystem.currentCommandPriority > self.priority or (subsystem.currentCommand != self and subsystem.currentCommandPriority == self.priority):
                 return False
+
+        print(subsystem.currentCommandPriority,self.priority)
 
         for subsystem in self.subsystems:
             if(subsystem.currentCommand != None):
@@ -39,13 +41,13 @@ class CommandBase():
         if(self.phase == CommandPhase.RUNNING):
             asyncio.run_coroutine_threadsafe(self.isFinished__(),self.scheduler.loop)
         if(self.phase == CommandPhase.FINISHED):
-            asyncio.run_coroutine_threadsafe(self.end__(),self.scheduler.loop)
+            asyncio.run_coroutine_threadsafe(self.end__(False),self.scheduler.loop)
 
         return True
 
     async def abort__(self):
         self.phase = CommandPhase.FINISHED
-        self.end__()
+        await self.end__(True)
 
     async def init__(self):
         await self.init()
@@ -54,11 +56,12 @@ class CommandBase():
     async def isFinished__(self):
         self.phase = CommandPhase.FINISHED if await self.isFinished() else CommandPhase.RUNNING
 
-    async def end__(self):
+    async def end__(self,aborted):
         await self.end()
-        for subsystem in self.subsystems:
-            subsystem.currentCommand = None
-            subsystem.currentCommandPriority = -1
+        if(not aborted):
+            for subsystem in self.subsystems:
+                subsystem.currentCommand = None
+                subsystem.currentCommandPriority = -1
         self.phase = CommandPhase.READY
 
     def __init__(self,subsystems:list[SubsystemBase],conditionSupplier:Awaitable,priority:int):
