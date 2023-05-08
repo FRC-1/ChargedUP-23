@@ -1,5 +1,5 @@
+from Utils.Colors import COLOR
 from .base.SubsystemBase import SubsystemBase
-
 from Hardware.BrushlessMotorController import BrushlessMotorController, ControlMode, InputMode
 from Constants import Constants
 
@@ -9,7 +9,7 @@ class BrushlessSubsystem(SubsystemBase):
         self.testBrushless.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
 
     async def periodic(self):
-        print("Subsystem Periodic",self.testBrushless.getPosition(),"/",self.testBrushless.position_setpoint)
+        pass
 
 
     async def enable(self):

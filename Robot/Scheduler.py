@@ -14,7 +14,6 @@ class AsyncLoopThread(Thread):
         self.loop.run_forever()
 
 class Scheduler():
-
     async def Continuous(self):
         while True:
             for task in self.continuous_tasks:

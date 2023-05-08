@@ -1,5 +1,5 @@
+from Utils.Colors import COLOR
 from .base.SubsystemBase import SubsystemBase
-
 from Hardware.StepperMotorController import StepperMotorController
 from Constants import Constants
 
@@ -8,7 +8,6 @@ class StepperSubsystem(SubsystemBase):
         self.testStepper = StepperMotorController(2,3,4,400,Constants.Simulation.Simulated)
 
     async def periodic(self):
-        print("Subsystem Periodic",self.testStepper.currentSteps,"/",self.testStepper.setpoint,self.testStepper.getAngle())
         pass
 
     async def enable(self):

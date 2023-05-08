@@ -1,3 +1,4 @@
+from Utils.Colors import COLOR
 import meshcat
 import numpy as np
 import math
@@ -175,9 +176,10 @@ class Field():
             meshcat.geometry.StlMeshGeometry.from_file(self.field_path),meshcat.geometry.MeshLambertMaterial(color=0x909090))
 
 def Init():
+    print(COLOR.OKBLUE, end="")
     vis = meshcat.Visualizer()
     vis.open()
-    print("Loading Simulation")
+    print("Loading Simulation",COLOR.RESET,"\n")
 
     return vis
 

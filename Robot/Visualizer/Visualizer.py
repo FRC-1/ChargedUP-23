@@ -1,5 +1,5 @@
+from Utils.Colors import COLOR
 import math
-import time
 import numpy as np
 import Visualizer.Robosim as Robosim
 from Constants import Constants
@@ -15,7 +15,7 @@ def point_at_angle_and_distance(point,distance,degrees):
     return (x,y)
 
 class Visualizer():
-    def __init__(self,Constants:Constants = Constants,loadField:bool = True,Scheduler = None) -> None:
+    def __init__(self,Scheduler,Constants:Constants = Constants,loadField:bool = True) -> None:
         self.constants = Constants
         self.vis = Robosim.Init()
         self.robot_simulation = Robosim.Robot(self.vis)
@@ -65,12 +65,12 @@ class Visualizer():
 
     def cable_length_to_angle(self,length_m):
         if(length_m < 0.06135 or length_m > 0.3579):
-            print("ANGLE CABLE LENGTH",length_m,"POTENTIALLY DANGEROUS. PLEASE KEEP CABLE LENGTH BETWEEN 0.06135 <-> 0.3579")
+            print(COLOR.WARNING,"ANGLE CABLE LENGTH",length_m,"POTENTIALLY DANGEROUS. PLEASE KEEP CABLE LENGTH BETWEEN 0.06135 <-> 0.3579",COLOR.RESET)
         length_m = min(max(length_m,0.06135),0.3579)
         sideA = 148.66/1000
         sideB = 21/100 # CABLE HOOK FROM ROTATION AXIS
         if(length_m > sideA + sideB or length_m < abs(sideA-sideB)):
-            print("CABLE LENGTH ERROR, SHOULD BE",abs(sideA-sideB),"<",length_m,"<",sideA+sideB)
+            print(COLOR.FAIL,"CABLE LENGTH ERROR, SHOULD BE",abs(sideA-sideB),"<",length_m,"<",sideA+sideB,COLOR.RESET)
             return -999
         angle = math.acos((math.pow(sideA,2)+math.pow(sideB,2)-math.pow(length_m,2))/(2*sideA*sideB))
         return 180-(math.degrees(angle)+19.472)+10
@@ -85,7 +85,7 @@ class Visualizer():
         
         self.arm_distance_rope_length = self.arm_distance_rope_length + self.constants.Simulation.dt * self.arm_distance_winch_velocity * 0.5
         if(self.arm_distance_rope_length < 0.0 or self.arm_distance_rope_length > 0.45):
-            print("DISTANCE CABLE LENGTH",self.arm_distance_rope_length,"POTENTIALLY DANGEROUS. PLEASE KEEP CABLE LENGTH BETWEEN 0.0 <-> 0.45")
+            print(COLOR.WARNING,"DISTANCE CABLE LENGTH",self.arm_distance_rope_length,"POTENTIALLY DANGEROUS. PLEASE KEEP CABLE LENGTH BETWEEN 0.0 <-> 0.45",COLOR.RESET)
         self.robot_simulation.set_arm_distance(self.arm_distance_rope_length)
 
         self.robot_simulation.set_turret_angle(self.turret_angle)

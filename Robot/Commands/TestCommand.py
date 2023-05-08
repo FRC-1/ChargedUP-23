@@ -14,7 +14,7 @@ class TestCommand(CommandBase):
         await self.stepperSubsystem.testStepper.moveToAngle(self.target_angle,100)
         
     async def isFinished(self):
-        return abs(self.stepperSubsystem.testStepper.getAngle() - self.target_angle) <= (360.0 / self.stepperSubsystem.testStepper.stepsPerRevolution) and self.time > 2
+        return abs(self.stepperSubsystem.testStepper.currentSteps - self.stepperSubsystem.testStepper.setpoint) == 0
 
     async def end(self):
         pass

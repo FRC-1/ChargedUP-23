@@ -4,3 +4,4 @@ numpy
 opencv-python
 GPIOSimulator
 matplotlib
+inputs

@@ -32,3 +32,4 @@ class SubsystemBase():
         self.ready = False
         scheduler.addContinuousTask(self.periodicMaster__)
         asyncio.run_coroutine_threadsafe(self.init__(),loop=scheduler.loop)
+        self.waitForReady()

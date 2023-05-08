@@ -20,11 +20,12 @@ class CommandBase():
     def end(self):
         pass
  
+    def shouldStart(self):
+        return self.phase == CommandPhase.INIT
 
     async def run__(self) -> bool: # returns if ran or not
         for subsystem in self.subsystems:
             if not subsystem.ready or subsystem.currentCommandPriority > self.priority or (subsystem.currentCommand != self and subsystem.currentCommandPriority == self.priority):
-                print(subsystem.currentCommandPriority)
                 return False
 
         if(self.conditionSupplier() and self.phase == CommandPhase.READY):
@@ -55,8 +56,11 @@ class CommandBase():
 
     async def isFinished__(self):
         self.time = time.time() - self.start_time
-        ended = await self.isFinished()
-        self.phase = CommandPhase.FINISHED if ended else CommandPhase.RUNNING
+        if(self.phase == CommandPhase.RUNNING):
+            ended = await self.isFinished()
+            self.phase = CommandPhase.FINISHED if ended or self.phase == CommandPhase.FINISHED else CommandPhase.RUNNING
+        else:
+            self.phase = CommandPhase.FINISHED
 
     async def end__(self,aborted):
         await self.end()
