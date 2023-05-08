@@ -1,6 +1,5 @@
 from Utils.Colors import COLOR
 
-from Subsystems.SubsystemBrushlessExample import BrushlessSubsystem
 from Subsystems.SubsystemStepperExample import StepperSubsystem
 from Commands.TestCommand import TestCommand
 from Commands.PrintCommand import PrintCommand
@@ -17,7 +16,7 @@ controller = Controller(sch)
 # Subsystems
 steppersubsystem = StepperSubsystem(sch)
 
-# steppersubsystem.waitForReady()
+# Simulation Parameters
 vis.turret_angle_func = steppersubsystem.testStepper.getAngle
 
 # Commands

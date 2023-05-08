@@ -4,12 +4,12 @@ import numpy as np
 import math
 
 models = {
-    "drivetrain" : meshcat.geometry.ObjMeshGeometry.from_file("I:\TomerSoftware\Code\Personal-Code\-1\Simulation\Robot Systems\Drivetrain.obj"),
-    "arm base" : meshcat.geometry.ObjMeshGeometry.from_file("I:\TomerSoftware\Code\Personal-Code\-1\Simulation\Robot Systems\Arm Base.obj"),
-    "arm stage 1" : meshcat.geometry.ObjMeshGeometry.from_file("I:\TomerSoftware\Code\Personal-Code\-1\Simulation\Robot Systems\Arm First Stage.obj"),
-    "arm stage 2" : meshcat.geometry.ObjMeshGeometry.from_file("I:\TomerSoftware\Code\Personal-Code\-1\Simulation\Robot Systems\Arm Second Stage.obj"),
-    "arm stage 3" : meshcat.geometry.ObjMeshGeometry.from_file("I:\TomerSoftware\Code\Personal-Code\-1\Simulation\Robot Systems\Arm Third Stage.obj"),
-    "gripper" : meshcat.geometry.ObjMeshGeometry.from_file("I:\TomerSoftware\Code\Personal-Code\-1\Simulation\Robot Systems\Gripper.obj"),
+    "drivetrain" : meshcat.geometry.ObjMeshGeometry.from_file("Robot\Visualizer\Robot Systems\Drivetrain.obj"),
+    "arm base" : meshcat.geometry.ObjMeshGeometry.from_file("Robot\Visualizer\Robot Systems\Arm Base.obj"),
+    "arm stage 1" : meshcat.geometry.ObjMeshGeometry.from_file("Robot\Visualizer\Robot Systems\Arm First Stage.obj"),
+    "arm stage 2" : meshcat.geometry.ObjMeshGeometry.from_file("Robot\Visualizer\Robot Systems\Arm Second Stage.obj"),
+    "arm stage 3" : meshcat.geometry.ObjMeshGeometry.from_file("Robot\Visualizer\Robot Systems\Arm Third Stage.obj"),
+    "gripper" : meshcat.geometry.ObjMeshGeometry.from_file("Robot\Visualizer\Robot Systems\Gripper.obj"),
 }
 
 class Robot():
@@ -171,7 +171,7 @@ class Field():
     def __init__(self,visualizer):
         self.vis = visualizer
         # Field should be STL because its easier to load (smaller file size)
-        self.field_path = "I:\TomerSoftware\Code\Personal-Code\-1\Simulation\Field\\2023Field.stl"
+        self.field_path = "Robot\Visualizer\Field\\2023Field.stl"
         visualizer["field"]["mesh"].set_object(
             meshcat.geometry.StlMeshGeometry.from_file(self.field_path),meshcat.geometry.MeshLambertMaterial(color=0x909090))
 
