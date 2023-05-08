@@ -21,6 +21,10 @@ class SubsystemBase():
     async def periodicMaster__(self):
         await self.periodic()
     
+    def waitForReady(self):
+        while not self.ready:
+            pass
+
     def __init__(self,scheduler):
         self.currentCommandPriority = Constants.lowest_command_priority
         self.currentCommand = None

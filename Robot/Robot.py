@@ -5,8 +5,15 @@ from Commands.TestCommand import TestCommand
 from Scheduler import Scheduler
 sch = Scheduler()
 
+from Visualizer.Visualizer import Visualizer
+vis = Visualizer(loadField=False,Scheduler=sch)
+
 # Subsystems
 steppersubsystem = StepperSubsystem(sch)
+
+steppersubsystem.waitForReady()
+vis.turret_angle_func = steppersubsystem.testStepper.getAngle
+
 
 # Commands
 command = TestCommand(steppersubsystem, lambda : (1 == 1),-1,target_angle=45)
