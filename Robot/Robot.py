@@ -6,6 +6,7 @@ from Commands.PrintCommand import PrintCommand
 
 from Subsystems.TurretSubsystem import TurretSubsystem
 from Commands.TurretCommands.MoveTurretToAngleCommand import MoveTurretToAngleCommand
+from Commands.TurretCommands.FlipTurretCommand import FlipTurretCommand
 
 from Subsystems.GripperSubsystem import GripperSubsystem
 from Commands.GripperCommand.MoveGripperToDistanceCommand import MoveGripperToDistance
@@ -43,6 +44,8 @@ def createTurretSubsystem():
     # Commands
     command = MoveTurretToAngleCommand(turretSubsystem,controller.A_button.onPress,1,180)
     command = MoveTurretToAngleCommand(turretSubsystem,controller.A_button.onRelease,2,0)
+
+    command = FlipTurretCommand(turretSubsystem, controller.B_button.onPress,3)
     
     # Immediate Tasks
     sch.addTask(turretSubsystem.enable())
