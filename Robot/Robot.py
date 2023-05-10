@@ -10,6 +10,11 @@ from Commands.TurretCommands.FlipTurretCommand import FlipTurretCommand
 
 from Subsystems.GripperSubsystem import GripperSubsystem
 from Commands.GripperCommand.MoveGripperToDistanceCommand import MoveGripperToDistance
+from Commands.GripperCommand.GripperDefaultCommand import GripperDefaultCommand
+from Commands.GripperCommand.GripperOpenCommand import GripperOpenCommand
+from Commands.GripperCommand.GripperCloseCommand import GripperCloseCommand
+
+from Commands.SwitchRobotMode import SwitchRobotMode
 
 from Scheduler import Scheduler
 sch = Scheduler()
@@ -42,9 +47,6 @@ def createTurretSubsystem():
     vis.turret_angle_func = turretSubsystem.getAngle
     
     # Commands
-    command = MoveTurretToAngleCommand(turretSubsystem,controller.A_button.onPress,1,180)
-    command = MoveTurretToAngleCommand(turretSubsystem,controller.A_button.onRelease,2,0)
-
     command = FlipTurretCommand(turretSubsystem, controller.B_button.onPress,3)
     
     # Immediate Tasks
@@ -55,9 +57,11 @@ def createGripperSubsystem():
     gripperSubsystem = GripperSubsystem(sch)
     
     # Commands
-    command = MoveGripperToDistance(gripperSubsystem,controller.B_button.onPress,1,30)
-    command = MoveGripperToDistance(gripperSubsystem,controller.B_button.onRelease,2,0)
-    
+    GripperDefaultCommand(gripperSubsystem,lambda:True,0)
+    GripperOpenCommand(gripperSubsystem,controller.right_bumper_button.onPress,1)
+    GripperCloseCommand(gripperSubsystem,controller.left_bumper_button.onPress,1)
+    SwitchRobotMode(gripperSubsystem,controller.Y_button.onPress,1)
+
     # Immediate Tasks
     sch.addTask(gripperSubsystem.enable())
 

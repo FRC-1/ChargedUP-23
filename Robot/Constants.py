@@ -38,3 +38,9 @@ class Constants:
             rotation_to_mm = 8 # 1 rot = 8 mm
             hydraulic_ratio = (804.25/314.16) # 2.56000127:1
             rpm = 1000
+
+            cone_closed = 30
+            cone_open = 25
+
+            cube_closed = 10
+            cube_open = 0
