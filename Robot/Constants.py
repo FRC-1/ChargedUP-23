@@ -28,3 +28,13 @@ class Constants:
             position_kP = 1
             velocity_kP = 0.02
             velocity_kI = 0.1
+        class TurretSubsystem:
+            stepsPerRevolution = 400
+            gearing = 2
+            rpm = 60 # time to complete half revolution-> 0.5/(RPM/60)
+        
+        class GripperSubsystem:
+            stepsPerRevolution = 400
+            rotation_to_mm = 8 # 1 rot = 8 mm
+            hydraulic_ratio = (804.25/314.16) # 2.56000127:1
+            rpm = 1000
