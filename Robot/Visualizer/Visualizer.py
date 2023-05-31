@@ -28,8 +28,8 @@ class Visualizer():
             pass
 
         # robot data
-        self.arm_angle_rope_length = 0.3579
-        self.arm_distance_rope_length = 0.0
+        self.arm_angle = 0.3579
+        self.arm_distance = 0.0
 
         # return funcs
         self.robot_position_func = None
@@ -37,6 +37,9 @@ class Visualizer():
         self.arm_angle_winch_velcotiy_func = None
         self.arm_distance_winch_velocity_func = None
         self.turret_angle_func = None
+
+        self.arm_distance_func = None
+        self.arm_angle_func = None
 
         # to be set by commands
         self.robot_position = (0,0)
@@ -80,12 +83,11 @@ class Visualizer():
         self.robot_simulation.set_location(self.get_showpose())
         self.robot_simulation.set_rotation(self.robot_rotation)
         
-        self.arm_angle_rope_length = self.arm_angle_rope_length + self.constants.Simulation.dt * self.arm_angle_winch_velcotiy
-        self.robot_simulation.set_arm_angle(self.cable_length_to_angle(self.arm_angle_rope_length))
+        self.robot_simulation.set_arm_angle(self.arm_angle_func())
         
-        self.arm_distance_rope_length = self.arm_distance_rope_length + self.constants.Simulation.dt * self.arm_distance_winch_velocity * 0.5
-        if(self.arm_distance_rope_length < 0.0 or self.arm_distance_rope_length > 0.45):
-            print(COLOR.WARNING,"DISTANCE CABLE LENGTH",self.arm_distance_rope_length,"POTENTIALLY DANGEROUS. PLEASE KEEP CABLE LENGTH BETWEEN 0.0 <-> 0.45",COLOR.RESET)
-        self.robot_simulation.set_arm_distance(self.arm_distance_rope_length)
+        self.arm_distance = self.arm_distance_func()
+        if(self.arm_distance < 0.0 or self.arm_distance > 0.45):
+            print(COLOR.WARNING,"DISTANCE CABLE LENGTH",self.arm_distance,"POTENTIALLY DANGEROUS. PLEASE KEEP CABLE LENGTH BETWEEN 0.0 <-> 0.45",COLOR.RESET)
+        self.robot_simulation.set_arm_distance(self.arm_distance)
 
         self.robot_simulation.set_turret_angle(self.turret_angle)

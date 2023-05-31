@@ -12,10 +12,8 @@ class GripperDefaultCommand(CommandBase):
         
         self.gripperSubsystem = gripperSubsystem
         self.setSetpoint()
-        print("C")
 
     async def init(self):
-        print("D")
         pass
         
     async def execute(self):
@@ -24,7 +22,6 @@ class GripperDefaultCommand(CommandBase):
 
     async def isFinished(self):
         await self.execute()
-        print(self.gripperSubsystem.getDistance())
         return False
     
     def setSetpoint(self):

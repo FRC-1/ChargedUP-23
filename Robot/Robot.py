@@ -14,6 +14,8 @@ from Commands.GripperCommand.GripperDefaultCommand import GripperDefaultCommand
 from Commands.GripperCommand.GripperOpenCommand import GripperOpenCommand
 from Commands.GripperCommand.GripperCloseCommand import GripperCloseCommand
 
+from Subsystems.ArmSubsytem import ArmSubsytem
+
 from Commands.SwitchRobotMode import SwitchRobotMode
 
 from Scheduler import Scheduler
@@ -65,8 +67,19 @@ def createGripperSubsystem():
     # Immediate Tasks
     sch.addTask(gripperSubsystem.enable())
 
+def createArmSubsystem():
+    # Subsystems
+    armSubsystem = ArmSubsytem(sch)
+
+    # Simulation Parameters
+    vis.arm_angle_func = armSubsystem.getAngle
+    vis.arm_distance_func = armSubsystem.getDistance
+
+    # Commands
+
 createTurretSubsystem()
 createGripperSubsystem()
+createArmSubsystem()
 
 # Continuous Tasks
 sch.startContinuous() # startContinuous needs to be called after all subsystems and continuous commands were added

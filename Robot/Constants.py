@@ -1,4 +1,5 @@
 import RPiSim.GPIO
+import math
 
 class Constants:
     lowest_command_priority = -999999
@@ -44,3 +45,8 @@ class Constants:
 
             cube_closed = 10
             cube_open = 0
+
+        class ArmSubsystem:
+            gearing = 1/(65/90)*(1/9)
+            winch_diameter = 60/1000 # mm to m
+            winch_circumfrence = winch_diameter * math.pi # m
