@@ -17,17 +17,8 @@ class AsyncLoopThread(Thread):
 class Scheduler():
     async def Continuous(self):
         while True:
-            # print("A")
             for task in self.continuous_tasks:
-                result = asyncio.run_coroutine_threadsafe(task(),loop=self.loop)
-                # print("B")
-                # result.exception
-                # exception = result.exception()      
-                # print("C")
-                # if exception != None:
-                #     print("D")
-                #     raise exception
-                # print("E")
+                asyncio.run_coroutine_threadsafe(task(),loop=self.loop)
 
             await asyncio.sleep(Constants.Simulation.dt)
         
@@ -46,8 +37,8 @@ class Scheduler():
         return run_task
 
     def startContinuous(self):
-        self.addTask(self.runContinuous())
-
+        self.cont_task = self.addTask(self.runContinuous())
+        
     def addContinuousTask(self,task:Awaitable):
         self.continuous_tasks.append(task)
 
