@@ -15,7 +15,6 @@ class ArmMoveToStateCommand(CommandBase):
         self.length_threshold = 0.05 # M
 
     async def init(self):
-        self.finished = false
         await self.armSubsystem.setAngle(self.target_angle)
         await self.armSubsystem.setLength(self.target_length)
 
