@@ -90,5 +90,5 @@ createArmSubsystem()
 # Continuous Tasks
 sch.startContinuous() # startContinuous needs to be called after all subsystems and continuous commands were added
 
-print(COLOR.BOLD + ' '.join(["Tomer", "Yotam", "Ori","\n"]) + COLOR.RESET)
+print(COLOR.BOLD + ' '.join([COLOR.FAIL + "Tomer", COLOR.OKCYAN + "Yotam", COLOR.OKGREEN + "Ori","\n"]) + COLOR.RESET)
 input(COLOR.WARNING + "\nENTER ANYTHING TO END EXECUTION ->\n\n" + COLOR.RESET)
