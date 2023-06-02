@@ -2,6 +2,7 @@ from threading import Thread
 import asyncio
 from Constants import Constants
 from typing import Awaitable
+from Utils.Colors import COLOR
 
 # first, we need a loop running in a parallel Thread
 class AsyncLoopThread(Thread):
@@ -16,8 +17,17 @@ class AsyncLoopThread(Thread):
 class Scheduler():
     async def Continuous(self):
         while True:
+            # print("A")
             for task in self.continuous_tasks:
-                asyncio.run_coroutine_threadsafe(task(),loop=self.loop)
+                result = asyncio.run_coroutine_threadsafe(task(),loop=self.loop)
+                # print("B")
+                # result.exception
+                # exception = result.exception()      
+                # print("C")
+                # if exception != None:
+                #     print("D")
+                #     raise exception
+                # print("E")
 
             await asyncio.sleep(Constants.Simulation.dt)
         

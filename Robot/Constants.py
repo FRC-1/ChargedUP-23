@@ -47,6 +47,7 @@ class Constants:
             cube_open = 0
 
         class ArmSubsystem:
-            gearing = 1/(65/90)*(1/9)
+            gearing = 1/((65/90)*(1/9))
             winch_diameter = 60/1000 # mm to m
             winch_circumfrence = winch_diameter * math.pi # m
+            initial_angle_position = 4.29718346386 # turns

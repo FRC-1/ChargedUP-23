@@ -9,9 +9,9 @@ def cable_length_to_angle(length_m):
     sideB = 21/100 # CABLE HOOK FROM ROTATION AXIS
     if(length_m > sideA + sideB or length_m < abs(sideA-sideB)):
         print("CABLE LENGTH ERROR, SHOULD BE",abs(sideA-sideB),"<",length_m,"<",sideA+sideB)
-        return -999
+    #     return -999
     angle = math.acos((math.pow(sideA,2)+math.pow(sideB,2)-math.pow(length_m,2))/(2*sideA*sideB))
-    return 180-(math.degrees(angle)+19.472)+10
+    return 180-(math.degrees(angle)+19.472)+10.148
 
 def angle_to_cable_length(angle_deg):
     sideA = 148.66/1000
@@ -30,26 +30,32 @@ class ArmSubsytem(SubsystemBase):
         self.angleMotor.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
         self.lengthMotor.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
         
+        self.angleMotor.simulated_position = (angle_to_cable_length(0) / Constants.Robot.ArmSubsystem.winch_circumfrence) * Constants.Robot.ArmSubsystem.gearing
+        self.angleMotor.position_setpoint = self.angleMotor.simulated_position
+        
     async def setAngle(self,angle:float):
         turns = (angle_to_cable_length(angle) / Constants.Robot.ArmSubsystem.winch_circumfrence) * Constants.Robot.ArmSubsystem.gearing
-        await self.angleMotor.setPositionSetpoint(turns)
+        self.angleMotor.setPositionSetpoint(turns)
     
     def getAngle(self):
-        return (self.angleMotor.getPosition() / Constants.Robot.ArmSubsystem.gearing) * Constants.Robot.ArmSubsystem.winch_circumfrence
+        cable_length = (self.angleMotor.getPosition() / Constants.Robot.ArmSubsystem.gearing) * Constants.Robot.ArmSubsystem.winch_circumfrence
+        return cable_length_to_angle(cable_length) - 19.472
 
-    async def setDistance(self, distance:float):
-        await self.lengthMotor.setPositionSetpoint((distance /  Constants.Robot.ArmSubsystem.winch_circumfrence) * Constants.Robot.ArmSubsystem.gearing)
+    async def setLength(self, length:float):
+        self.lengthMotor.setPositionSetpoint((length /  Constants.Robot.ArmSubsystem.winch_circumfrence) * Constants.Robot.ArmSubsystem.gearing)
     
-    def getDistance(self):
-        return (self.distance_motor.getPosition() / Constants.Robot.ArmSubsystem.gearing) * Constants.Robot.ArmSubsystem.winch_circumfrence
+    def getLength(self):
+        return (self.lengthMotor.getPosition() / Constants.Robot.ArmSubsystem.gearing) * Constants.Robot.ArmSubsystem.winch_circumfrence
     
     async def periodic(self):
         if(Constants.Simulation.Simulated):
             await self.angleMotor.simulationUpdate()
-            await self.distanceMotor.simulationUpdate()
+            await self.lengthMotor.simulationUpdate()
 
     async def enable(self):
-        pass
+        self.angleMotor.enable()
+        self.lengthMotor.enable()
 
     async def disable(self):
-        pass
+        self.angleMotor.disable()
+        self.lengthMotor.disable()

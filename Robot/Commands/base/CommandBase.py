@@ -41,6 +41,7 @@ class CommandBase():
         if(self.phase == CommandPhase.RUNNING):
             asyncio.run_coroutine_threadsafe(self.isFinished__(),self.scheduler.loop)
         if(self.phase == CommandPhase.FINISHED):
+            self.finished = True
             asyncio.run_coroutine_threadsafe(self.end__(False),self.scheduler.loop)
 
         return True
@@ -50,6 +51,7 @@ class CommandBase():
         await self.end__(True)
 
     async def init__(self):
+        self.finished = False
         self.start_time = time.time()
         await self.init()
         self.phase = CommandPhase.RUNNING
@@ -61,6 +63,9 @@ class CommandBase():
             self.phase = CommandPhase.FINISHED if ended or self.phase == CommandPhase.FINISHED else CommandPhase.RUNNING
         else:
             self.phase = CommandPhase.FINISHED
+
+    def getFinished(self):
+        return self.finished
 
     async def end__(self,aborted):
         await self.end()
@@ -79,3 +84,4 @@ class CommandBase():
         self.scheduler.addContinuousTask(self.run__)
         self.start_time = 0.0
         self.time = 0.0
+        self.finished = False

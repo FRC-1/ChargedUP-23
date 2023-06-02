@@ -15,6 +15,7 @@ from Commands.GripperCommand.GripperOpenCommand import GripperOpenCommand
 from Commands.GripperCommand.GripperCloseCommand import GripperCloseCommand
 
 from Subsystems.ArmSubsytem import ArmSubsytem
+from Commands.ArmCommands.ArmMoveToStateCommand import ArmMoveToStateCommand
 
 from Commands.SwitchRobotMode import SwitchRobotMode
 
@@ -73,9 +74,14 @@ def createArmSubsystem():
 
     # Simulation Parameters
     vis.arm_angle_func = armSubsystem.getAngle
-    vis.arm_distance_func = armSubsystem.getDistance
+    vis.arm_distance_func = armSubsystem.getLength
 
     # Commands
+    command = ArmMoveToStateCommand(armSubsystem, lambda : (controller.X_button.onPress() and armSubsystem.getAngle()< 20) ,1,20,0.4)
+    ArmMoveToStateCommand(armSubsystem,command.getFinished,1,0,0.0)
+
+    # Immediate Tasks
+    sch.addTask(armSubsystem.enable())
 
 createTurretSubsystem()
 createGripperSubsystem()
@@ -84,7 +90,5 @@ createArmSubsystem()
 # Continuous Tasks
 sch.startContinuous() # startContinuous needs to be called after all subsystems and continuous commands were added
 
-try:
-    input(COLOR.WARNING + "\nENTER ANYTHING TO END EXECUTION ->\n\n" + COLOR.RESET)
-except:
-    pass
+print(COLOR.BOLD + ' '.join(["Tomer", "Yotam", "Ori","\n"]) + COLOR.RESET)
+input(COLOR.WARNING + "\nENTER ANYTHING TO END EXECUTION ->\n\n" + COLOR.RESET)
