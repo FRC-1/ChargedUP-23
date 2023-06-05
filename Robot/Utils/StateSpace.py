@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import time
 import scipy as sp
 
-from termcolor import colored
+from Colors import COLOR
 
 def GetErrorLimits(K,max_input,min_input):
         max_error=np.array(np.matrix(K).I@max_input)[0]
@@ -53,7 +53,7 @@ class StateSpaceSystem():
             elif (A.shape == (n,n)):
                 self.A = A
             else:
-                raise Exception(colored("Matrix A must be of shape (n,n) ["+str(n)+","+str(n)+"]","red"))
+                raise Exception(COLOR.FAIL + ("Matrix A must be of shape (n,n) ["+str(n)+","+str(n)+"]","red") + COLOR.RESET)
         else:
             self.A = np.array(self.A)
 
@@ -63,7 +63,7 @@ class StateSpaceSystem():
             elif (B.shape == (n,p)):
                 self.B = B
             else:
-                raise Exception(colored("Matrix B must be of shape (n,p) ["+str(n)+","+str(p)+"]","red"))
+                raise Exception(COLOR.FAIL + ("Matrix B must be of shape (n,p) ["+str(n)+","+str(p)+"]","red") + COLOR.RESET)
         else:
             self.B = np.array(self.B)
 
@@ -73,7 +73,7 @@ class StateSpaceSystem():
             elif (C.shape == (q,n)):
                 self.C = C
             else:
-                raise Exception(colored("Matrix C must be of shape (q,n) ["+str(q)+","+str(n)+"]","red"))
+                raise Exception(COLOR.FAIL + ("Matrix C must be of shape (q,n) ["+str(q)+","+str(n)+"]","red") + COLOR.RESET)
         else:
             self.C = np.array(self.C)
 
@@ -83,7 +83,7 @@ class StateSpaceSystem():
             elif (D.shape == (q,p)):
                 self.D = D
             else:
-                raise Exception(colored("Matrix D must be of shape (q,p) ["+str(q)+","+str(p)+"]","red"))
+                raise Exception(COLOR.FAIL + ("Matrix D must be of shape (q,p) ["+str(q)+","+str(p)+"]","red") + COLOR.RESET)
         else:
             self.D = np.array(self.D)
 
@@ -106,13 +106,13 @@ class StateSpaceSystem():
         if (u.shape == (self.p,)):
             self.u = u
         else:
-            raise Exception(colored("u (input) must be a vector of len p ["+str(self.p)+"]","red"))
+            raise Exception(COLOR.FAIL + ("u (input) must be a vector of len p ["+str(self.p)+"]","red")+COLOR.RESET)
 
     def Set_x(self,x):
         if (x.shape == (self.n,)):
             self.x = x
         else:
-            raise Exception(colored("x (input) must be a vector of len n ["+str(self.n)+"]","red"))
+            raise Exception(COLOR.FAIL + ("x (input) must be a vector of len n ["+str(self.n)+"]","red")+COLOR.RESET)
 
     def Get_x(self):
         return self.x
@@ -123,7 +123,7 @@ class StateSpaceSystem():
         if (u.shape == (self.p,)):
             return np.matmul(self.A,self.x)+np.matmul(self.B,u)
         else:
-            raise Exception(colored("u (input) must be a vector of len p ["+str(self.p)+"]","red"))
+            raise Exception(COLOR.FAIL + ("u (input) must be a vector of len p ["+str(self.p)+"]","red")+COLOR.RESET)
 
     def Get_y(self,u = None):
         if(u is None):
@@ -131,7 +131,7 @@ class StateSpaceSystem():
         if (u.shape == (self.p,)):
             return self.Get_C() @ self.Get_x() + self.Get_D() @ u 
         else:
-            raise Exception(colored("u (input) must be a vector of len p ["+str(self.p)+"]","red"))
+            raise Exception(COLOR.FAIL + ("u (input) must be a vector of len p ["+str(self.p)+"]","red")+COLOR.RESET)
 
     def Get_u(self):
         return self.u
@@ -229,7 +229,7 @@ if __name__ == "__main__":
             if (u.shape == (self.p,)):
                 return np.multiply(self.A,dt) @ self.x + np.multiply(self.B,dt) @ u
             else:
-                raise Exception(colored("u (input) must be a vector of len p ["+str(self.p)+"]","red"))
+                raise Exception(COLOR.FAIL + ("u (input) must be a vector of len p ["+str(self.p)+"]","red") + COLOR.RESET)
 
     Position_Controlled_Flywheel = PositionControlledFlywheel(1,1,2)
     

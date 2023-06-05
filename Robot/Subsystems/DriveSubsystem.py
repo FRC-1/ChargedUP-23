@@ -1,6 +1,7 @@
 from .base.SubsystemBase import SubsystemBase
 from Hardware.BrushlessMotorController import BrushlessMotorController, ControlMode, InputMode
 from Constants import Constants
+from Utils.StateSpace import StateSpaceSystem
 
 class DriveSubsystem(SubsystemBase):
     async def init(self):
@@ -14,14 +15,14 @@ class DriveSubsystem(SubsystemBase):
         right_position = self.rightMotor.getPosition()
 
         self.leftMotor.setPositionSetpoint(left_position)
-        self.leftMotor.setPositionSetpoint(right_position)
+        self.rightMotor.setPositionSetpoint(right_position)
         
-        self.leftMotor.setControlMode(ControlMode.POSITION_CONTROL)
-        self.rightMotor.setControlMode(ControlMode.POSITION_CONTROL)
+        self.leftMotor.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
+        self.rightMotor.setControlMode(ControlMode.POSITION_CONTROL,InputMode.PASSTHROUGH)
         
     def unlockDrivetrain(self):
-        self.leftMotor.setControlMode(ControlMode.VELOCITY_CONTROL)
-        self.rightMotor.setControlMode(ControlMode.VELOCITY_CONTROL)
+        self.leftMotor.setControlMode(ControlMode.VELOCITY_CONTROL,InputMode.PASSTHROUGH)
+        self.rightMotor.setControlMode(ControlMode.VELOCITY_CONTROL,InputMode.PASSTHROUGH)
 
     async def periodic(self):
         pass
