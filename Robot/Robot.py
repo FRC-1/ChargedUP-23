@@ -17,6 +17,8 @@ from Commands.GripperCommand.GripperCloseCommand import GripperCloseCommand
 from Subsystems.ArmSubsytem import ArmSubsytem
 from Commands.ArmCommands.ArmMoveToStateCommand import ArmMoveToStateCommand
 
+from Subsystems.DriveSubsystem import DriveSubsystem
+
 from Commands.SwitchRobotMode import SwitchRobotMode
 
 from Scheduler import Scheduler
@@ -27,20 +29,6 @@ vis = Visualizer(Scheduler=sch,loadField=False)
 
 from Driverstation.Controller import Controller
 controller = Controller(sch)
-
-def createTestSubsystem():
-    # Subsystems
-    steppersubsystem = StepperSubsystem(sch)
-
-    # Simulation Parameters
-    vis.turret_angle_func = steppersubsystem.testStepper.getAngle
-
-    # Commands
-    command = TestCommand(steppersubsystem, controller.A_button.onPress,1,target_angle=45)
-    command = TestCommand(steppersubsystem, controller.A_button.onRelease,1,target_angle=0)
-
-    # Immediate Tasks
-    sch.addTask(steppersubsystem.enable())
     
 def createTurretSubsystem():
     # Subsystems
@@ -77,15 +65,31 @@ def createArmSubsystem():
     vis.arm_distance_func = armSubsystem.getLength
 
     # Commands
-    command = ArmMoveToStateCommand(armSubsystem, lambda : (controller.X_button.onPress() and armSubsystem.getAngle()< 20) ,1,20,0.4)
-    ArmMoveToStateCommand(armSubsystem,command.getFinished,1,0,0.0)
+    command1 = ArmMoveToStateCommand(armSubsystem, controller.dpad_up_button.onPress ,2,45,0.20)
+    #ArmMoveToStateCommand(armSubsystem,command1.getFinished,1,20,0.45)
+
+    command2 = ArmMoveToStateCommand(armSubsystem, lambda: (controller.dpad_left_button.onPress() and armSubsystem.getAngle() > 40 and armSubsystem.getLength() <= 0.22) ,2,20,0.45)
+    command2 = ArmMoveToStateCommand(armSubsystem, lambda: (controller.dpad_down_button.onPress() and armSubsystem.getAngle() > 40 and armSubsystem.getLength() <= 0.22) ,2,0,0.0)
+    #ArmMoveToStateCommand(armSubsystem,lambda : (controller.A_button.isPressed() and armSubsystem.getAngle() == 45) ,1,0,0.0)
 
     # Immediate Tasks
     sch.addTask(armSubsystem.enable())
+def createDriveSubsytem():
+    # Subsystems
+    driveSubsytem = DriveSubsystem(sch)
+    
+    # Simulation Parameters
+
+    # Commands
+
+    # Immediate Tasks
+    sch.addTask(driveSubsytem.enable())
+
 
 createTurretSubsystem()
 createGripperSubsystem()
 createArmSubsystem()
+createDriveSubsytem()
 
 # Continuous Tasks
 sch.startContinuous() # startContinuous needs to be called after all subsystems and continuous commands were added
