@@ -51,3 +51,8 @@ class Constants:
             winch_diameter = 60/1000 # mm to m
             winch_circumfrence = winch_diameter * math.pi # m
             initial_angle_position = 4.29718346386 # turns
+
+        class DriveSubsystem:
+            wheel_diameter = 0.1016 # M
+            wheel_circumference = 0.64 # M
+            wheel_distance = 19.46

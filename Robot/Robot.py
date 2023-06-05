@@ -74,12 +74,14 @@ def createArmSubsystem():
 
     # Immediate Tasks
     sch.addTask(armSubsystem.enable())
-    
+
 def createDriveSubsytem():
     # Subsystems
     driveSubsytem = DriveSubsystem(sch)
 
     # Simulation Parameters
+    vis.robot_position_func = driveSubsytem.getPosition
+    vis.robot_rotation_func = driveSubsytem.getRotationDeg
 
     # Commands
 
