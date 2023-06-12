@@ -3,6 +3,8 @@ import math
 
 class Constants:
     lowest_command_priority = -999999
+    class Controller:
+        stick_deadzone = 0.1
 
     class Simulation:
         Simulated = True
@@ -56,3 +58,4 @@ class Constants:
             wheel_diameter = 0.1016 # M
             wheel_circumference = 0.64 # M
             wheel_distance = 19.46
+            max_velocity = 2199.375 # RPM 

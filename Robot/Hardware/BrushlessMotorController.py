@@ -126,7 +126,7 @@ class BrushlessMotorController():
     def setVelocitySetpoint(self,rpm:float,torque:float=0.0):
         self.velocity_setpoint = min(rpm,self.simulation_constants.Voltage * self.kV)/60
         if not self.simulation_constants.Simulated:
-            self.axis.controller.input_vel = self.velocity_setpoint # CHANGE ODRIVE VELOCITY SETPOINT
+            self.axis.controller.input_vel = self.velocity_setpoint/60 # CHANGE ODRIVE VELOCITY SETPOINT
             self.axis.controller.input_torque = torque # SET FEEDFORWARD TORQUE
 
     def setPositionSetpoint(self,turns:float,rpm:float=0.0,torque:float=0.0):
@@ -147,7 +147,7 @@ class BrushlessMotorController():
         if not self.simulation_constants.Simulated:
             return self.axis.encoder.vel_estimate * 60 # RPM
         else:
-            return self.velocity_setpoint
+            return self.velocity_setpoint * 60
 
     def enable(self):
         self.enabled = True

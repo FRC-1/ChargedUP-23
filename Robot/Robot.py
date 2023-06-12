@@ -18,6 +18,7 @@ from Subsystems.ArmSubsytem import ArmSubsytem
 from Commands.ArmCommands.ArmMoveToStateCommand import ArmMoveToStateCommand
 
 from Subsystems.DriveSubsystem import DriveSubsystem
+from Commands.DriveCommands.DriveByJoyCommand import DriveByJoyCommand
 
 from Commands.SwitchRobotMode import SwitchRobotMode
 
@@ -84,6 +85,7 @@ def createDriveSubsytem():
     vis.robot_rotation_func = driveSubsytem.getRotationDeg
 
     # Commands
+    command = DriveByJoyCommand(driveSubsytem,lambda: (True),0,controller.getRightStick)
 
     # Immediate Tasks
     sch.addTask(driveSubsytem.enable())
