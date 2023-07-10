@@ -1,31 +1,66 @@
-from Utils.Colors import COLOR
+#from Utils.Colors import COLOR
 import threading
 import time
 from inputs import get_gamepad, UnpluggedError
 
 class Controller():
-    def __init__(self,sch) -> None:
-        self.values = GamepadValues()
+    def __init__(self,values = None) -> None:
+        if values is None:
+            self.values = GamepadValues()
 
-        self.A_button = Button()
-        self.B_button = Button()
-        self.X_button = Button()
-        self.Y_button = Button()
+            self.A_button = Button()
+            self.B_button = Button()
+            self.X_button = Button()
+            self.Y_button = Button()
 
-        self.right_bumper_button = Button()
-        self.left_bumper_button = Button()
+            self.right_bumper_button = Button()
+            self.left_bumper_button = Button()
 
-        self.start_button = Button()
-        self.select_button = Button()
+            self.start_button = Button()
+            self.select_button = Button()
 
-        self.dpad_up_button = Button()
-        self.dpad_left_button = Button()
-        self.dpad_down_button = Button()
-        self.dpad_right_button = Button()
+            self.dpad_up_button = Button()
+            self.dpad_left_button = Button()
+            self.dpad_down_button = Button()
+            self.dpad_right_button = Button()
 
-        thread = threading.Thread(target=self.update, args=())
-        thread.daemon = True
-        thread.start()
+            thread = threading.Thread(target=self.update, args=())
+            thread.daemon = True
+            thread.start()
+        else:
+            self.values = values
+
+            self.A_button = Button()
+            self.B_button = Button()
+            self.X_button = Button()
+            self.Y_button = Button()
+
+            self.right_bumper_button = Button()
+            self.left_bumper_button = Button()
+
+            self.start_button = Button()
+            self.select_button = Button()
+
+            self.dpad_up_button = Button()
+            self.dpad_left_button = Button()
+            self.dpad_down_button = Button()
+            self.dpad_right_button = Button()
+            
+            self.A_button.setVal(int(self.values.btn_A))
+            self.B_button.setVal(int(self.values.btn_B))
+            self.X_button.setVal(int(self.values.btn_X))
+            self.Y_button.setVal(int(self.values.btn_Y))
+
+            self.right_bumper_button.setVal(int(self.values.btn_TR))
+            self.left_bumper_button.setVal(int(self.values.btn_TL))
+            
+            self.start_button.setVal(int(self.values.btn_Start))
+            self.select_button.setVal(int(self.values.btn_Select))
+            
+            self.dpad_up_button.setVal(self.values.dyval)
+            self.dpad_left_button.setVal(-self.values.dxval)
+            self.dpad_down_button.setVal(-self.values.dyval)
+            self.dpad_right_button.setVal(self.values.dxval)
 
     def update(self):
         while True:
@@ -47,7 +82,7 @@ class Controller():
                     self.dpad_down_button.setVal(-self.values.dyval)
                     self.dpad_right_button.setVal(self.values.dxval)
             except UnpluggedError:
-                print(COLOR.FAIL,"NO GAMEPAD FOUND",COLOR.RESET)
+                print("NO GAMEPAD FOUND")
                 exit()
             time.sleep(0.01)
 
@@ -57,6 +92,9 @@ class Controller():
         return (self.values.rxval,self.values.ryval)
     def getDirectionalPad(self):
         return (self.values.dxval,self.values.dyval)
+
+    def getValues(self):
+        return self.values
 
 class Button():
     def __init__(self,press_threshold = 0.5) -> None:
