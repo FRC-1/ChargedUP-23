@@ -2,7 +2,7 @@ import threading
 import time
 from Utils.Colors import COLOR
 
-from Driverstation.Server import run_server, GetController, isReady
+from Driverstation.Server import run_server, GetController, isReady, isEnable
 
 from Subsystems.SubsystemStepperExample import StepperSubsystem
 from Commands.TestCommand import TestCommand
@@ -32,6 +32,25 @@ sch = Scheduler()
 from Visualizer.Visualizer import Visualizer
 vis = Visualizer(Scheduler=sch,loadField=False)
 
+async def enable_subsytems():
+    for subsytem in subsytems:
+        await subsytem.enable()
+async def disable_subsytems():
+    for subsytem in subsytems:
+        await subsytem.disable()
+
+was_enabled = False
+async def checkEnabled():
+    if(isEnable()):
+        if not was_enabled:
+            await enable_subsytems()
+            was_enabled = True
+    else:
+        if was_enabled:
+            await disable_subsytems()
+            was_enabled = False
+sch.addContinuousTask(checkEnabled)
+
 # Run server
 thread = threading.Thread(target=run_server, args=())
 thread.daemon = True
@@ -46,22 +65,24 @@ while GetController() is None:
     time.sleep(1)
     print(",,,")
 
+subsytems = []
+
 def createTurretSubsystem():
     # Subsystems
     turretSubsystem = TurretSubsystem(sch)
+    subsytems.append(turretSubsystem)
     
     # Simulation Parameters
     vis.turret_angle_func = turretSubsystem.getAngle
     
     # Commands
     command = FlipTurretCommand(turretSubsystem, lambda : GetController().B_button.onPress(),3)
-    
-    # Immediate Tasks
-    sch.addTask(turretSubsystem.enable())
 
 def createGripperSubsystem():
     # Subsystems
     gripperSubsystem = GripperSubsystem(sch)
+    subsytems.append(gripperSubsystem)
+
     
     # Commands
     GripperDefaultCommand(gripperSubsystem,lambda:True,0)
@@ -69,12 +90,10 @@ def createGripperSubsystem():
     GripperCloseCommand(gripperSubsystem,lambda :GetController().left_bumper_button.onPress,1)
     SwitchRobotMode(gripperSubsystem,lambda :GetController().Y_button.onPress,1)
 
-    # Immediate Tasks
-    sch.addTask(gripperSubsystem.enable())
-
 def createArmSubsystem():
     # Subsystems
     armSubsystem = ArmSubsytem(sch)
+    subsytems.append(armSubsystem)
 
     # Simulation Parameters
     vis.arm_angle_func = armSubsystem.getAngle
@@ -87,12 +106,11 @@ def createArmSubsystem():
     command2 = ArmMoveToStateCommand(armSubsystem, lambda: (GetController().dpad_left_button.onPress() and armSubsystem.getAngle() > 40 and armSubsystem.getLength() <= 0.22) ,2,20,0.45)
     command2 = ArmMoveToStateCommand(armSubsystem, lambda: (GetController().dpad_down_button.onPress() and armSubsystem.getAngle() > 40 and armSubsystem.getLength() <= 0.22) ,2,0,0.0)
 
-    # Immediate Tasks
-    sch.addTask(armSubsystem.enable())
 
 def createDriveSubsytem():
     # Subsystems
     driveSubsytem = DriveSubsystem(sch)
+    subsytems.append(driveSubsytem)
 
     # Simulation Parameters
     vis.robot_position_func = driveSubsytem.getPosition
@@ -100,10 +118,6 @@ def createDriveSubsytem():
 
     # Commands
     command = DriveByJoyCommand(driveSubsytem,lambda: (True),0,GetController().getRightStick)
-
-    # Immediate Tasks
-    sch.addTask(driveSubsytem.enable())
-
 
 createTurretSubsystem()
 createGripperSubsystem()

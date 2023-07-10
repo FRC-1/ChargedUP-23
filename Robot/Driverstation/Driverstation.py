@@ -6,13 +6,21 @@ from .Controller import Controller
 pollingRateMs = 10
 connected = False
 client_socket = None
+enabled = False
+
 def send_message(client_socket, message):
     client_socket.send(message.encode())
 
-def enable_robot(client_socket):
+def enable_robot(client_socket, window):
+    global enabled
+    enabled = True
+    window.configure(bg='green')
     send_message(client_socket, "enable")
 
-def disable_robot(client_socket):
+def disable_robot(client_socket, window):
+    global enabled
+    enabled = False
+    window.configure(bg='red')
     send_message(client_socket, "disable")
 
 def connect_to_server(host, port):
@@ -29,7 +37,7 @@ def connect_to_server(host, port):
         print('Connection refused. Make sure the robot is running.')
 
 def main():
-    global connected,client_socket
+    global connected,client_socket, enabled
 
     # Server information
     host = 'localhost'
@@ -39,8 +47,7 @@ def main():
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def loop():
-        if not connected:
-            print("NOT CONNECTED!")
+        if not connected or not enabled:
             window.after(pollingRateMs, loop)
             return
         
@@ -53,17 +60,19 @@ def main():
     # Create Tkinter window
     window = tk.Tk()
     window.title("Robot Controller")
+    enabled = False
+    window.configure(bg='red')
 
     # Connect button
     connect_button = tk.Button(window, text="Connect", command=lambda: connect_to_server(host, port))
     connect_button.pack()
 
     # Enable button
-    enable_button = tk.Button(window, text="Enable", command=lambda: enable_robot(client_socket))
+    enable_button = tk.Button(window, text="Enable", command=lambda: enable_robot(client_socket,window))
     enable_button.pack()
 
     # Disable button
-    disable_button = tk.Button(window, text="Disable", command=lambda: disable_robot(client_socket))
+    disable_button = tk.Button(window, text="Disable", command=lambda: disable_robot(client_socket,window))
     disable_button.pack()
 
     window.after(pollingRateMs, loop)

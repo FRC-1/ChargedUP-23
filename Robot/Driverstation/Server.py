@@ -7,9 +7,10 @@ Controller()
 
 received_controller = None
 ready = False
+enabled = False
 
 def run_server():
-    global received_controller, ready
+    global received_controller, ready,enabled
     # Server information
     host = 'localhost'
     port = 11111
@@ -37,12 +38,18 @@ def run_server():
             if not data:
                 break
 
-            # Deserialize the received object
-            #print('received -', pickle.loads(data))
-            received_controller = Controller(values = pickle.loads(data))
+            if(data == b"enable"):
+                enabled = True
+            elif(data == b"disable"):
+                enabled = False
+            else:
+                # Deserialize the received object
+                # print('received -', pickle.loads(data))
+                received_controller = Controller(values = pickle.loads(data))
 
         # Close the client connection
         client_socket.close()
+        enabled = False
         print('Client connection closed.')
 
     # Close the server socket
@@ -55,5 +62,7 @@ def GetController() -> Controller:
 def isReady():
     return ready
 
+def isEnable():
+    return enabled
 if __name__ == '__main__':
     run_server()
