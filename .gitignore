@@ -2,3 +2,5 @@
 *.pyc
 *.stl
 *.xml
+*.dxf
+*.zip
